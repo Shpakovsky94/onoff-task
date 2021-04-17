@@ -31,19 +31,19 @@ public class CryptoController {
     }
 
     @GetMapping(value="/show-entities")
-    List<Crypto> getAll(){
+    public List<Crypto> getAll(){
         return cryptoService.findAll();
     }
 
     @GetMapping(value="/entities/{id}")
-    ResponseEntity<Crypto> getById(@PathVariable("id") Long id) {
+    public ResponseEntity<Crypto> getById(@PathVariable("id") Long id) {
             Crypto crypto = cryptoService.findById(id)
                                          .orElseThrow(()->new EntityNotFoundException(id));
         return ResponseEntity.ok().body(crypto);
     }
 
     @PostMapping(value="/entities")
-    ResponseEntity<?> createEntity(@RequestBody CryptoDto inprod) {
+    public ResponseEntity<?> createEntity(@RequestBody CryptoDto inprod) {
         Crypto crypto = CryptoMapper.DtoToEntity(inprod);
         Crypto addedCrypto = cryptoService.save(crypto);
         URI location = ServletUriComponentsBuilder.fromCurrentRequest()
@@ -54,7 +54,7 @@ public class CryptoController {
     }
 
     @PutMapping(value="/entities/{id}")
-    ResponseEntity<Crypto> updateEntity(@PathVariable("id") Long id, @RequestBody CryptoDto cryptoDto) {
+    public ResponseEntity<Crypto> updateEntity(@PathVariable("id") Long id, @RequestBody CryptoDto cryptoDto) {
         Crypto prd = cryptoService.findById(id)
                                   .orElseThrow(()->new EntityNotFoundException(id));
 
@@ -65,7 +65,7 @@ public class CryptoController {
     }
 
     @DeleteMapping(value="/entities/{id}")
-    ResponseEntity deleteEntity(@PathVariable("id") Long id) {
+    public ResponseEntity<String> deleteEntity(@PathVariable("id") Long id) {
         Crypto crypto = cryptoService.findById(id)
                                   .orElseThrow(()->new EntityNotFoundException(id));
         cryptoService.deleteById(crypto.getId());
