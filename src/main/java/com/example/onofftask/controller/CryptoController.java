@@ -43,8 +43,8 @@ public class CryptoController {
     }
 
     @PostMapping(value="/entities")
-    public ResponseEntity<?> createEntity(@RequestBody CryptoDto inprod) {
-        Crypto crypto = CryptoMapper.DtoToEntity(inprod);
+    public ResponseEntity<String> createEntity(@RequestBody CryptoDto cryptoDto) {
+        Crypto crypto = CryptoMapper.DtoToEntity(cryptoDto);
         Crypto addedCrypto = cryptoService.save(crypto);
         URI location = ServletUriComponentsBuilder.fromCurrentRequest()
                                                   .path("/{id}")
