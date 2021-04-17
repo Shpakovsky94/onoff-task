@@ -1,6 +1,6 @@
 package com.example.onofftask.service;
 
-import com.example.onofftask.dao.CryptoRepository;
+import com.example.onofftask.dao.CryptoDao;
 import com.example.onofftask.model.Crypto;
 import java.util.List;
 import java.util.Optional;
@@ -10,15 +10,14 @@ import org.springframework.stereotype.Service;
 @Service
 public class CryptoServiceImpl implements CryptoService{
 
-    private final CryptoRepository repository;
+    private final CryptoDao repository;
 
     @Autowired
-    public CryptoServiceImpl(CryptoRepository repository) {
+    public CryptoServiceImpl(CryptoDao repository) {
         this.repository = repository;
     }
 
     @Override public List<Crypto> findAll() {
-        System.out.print("sww");
         return repository.findAll();
     }
 
@@ -26,8 +25,9 @@ public class CryptoServiceImpl implements CryptoService{
         return repository.findById(id);
     }
 
-    @Override public void save(Crypto crypto) {
+    @Override public Crypto save(Crypto crypto) {
         repository.save(crypto);
+        return crypto;
     }
 
     @Override public void deleteById(Long id) {

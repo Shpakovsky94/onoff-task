@@ -8,7 +8,7 @@ public interface CryptoService {
 
     List<Crypto> findAll();
     Optional<Crypto> findById(Long id);
-    void save(Crypto crypto);
+    Crypto save(Crypto crypto);
     void deleteById(Long id);
     
 }
