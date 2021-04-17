@@ -1,4 +1,4 @@
-package com.example.onofftask.repository;
+package com.example.onofftask.dao;
 
 import com.example.onofftask.model.Crypto;
 import org.springframework.data.jpa.repository.JpaRepository;
