@@ -10,6 +10,7 @@ public class EntityNotFoundException extends RuntimeException {
     public EntityNotFoundException(Long id) {
         this.message = "No Entity with ID : "+id;
     }
+    @Override
     public String getMessage() {
         return message;
     }
