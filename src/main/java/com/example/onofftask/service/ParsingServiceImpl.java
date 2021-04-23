@@ -34,9 +34,7 @@ public class ParsingServiceImpl implements ParsingService {
                 throw new InvalidInputException();
             }
 
-            jsonResult = jsonResult.replace("\\[","");
-            jsonResult = jsonResult.replace("\\]","");
-            jsonResult = jsonResult.replace("\"","");
+            jsonResult = jsonResult.replaceAll("[\\[\\]\\\\\"]","");
 
             String[] value = jsonResult.split(",");
             dataFromJson.setName(value[0]);

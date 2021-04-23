@@ -1,5 +1,6 @@
 package com.example.onofftask.model;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import java.math.BigDecimal;
 import java.util.Date;
 import javax.persistence.Column;
@@ -8,13 +9,16 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
+import javax.persistence.Transient;
 
 @Entity
 @Table(name = "CRYPTO")
 public class Crypto {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "ID")
     private  Long id;
 
@@ -28,11 +32,14 @@ public class Crypto {
     private String wallet;
 
     @Column(name = "CREATED_AT")
+    @Temporal(TemporalType.TIMESTAMP)
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm")
     private Date creationDate;
 
     @Column(name = "PURCHASE_MARKET_VALUE")
     private BigDecimal purchaseMarketValue;
 
+    @Transient
     private BigDecimal currentMarketValue;
 
     public Crypto() {
@@ -41,14 +48,11 @@ public class Crypto {
     public Crypto(
         String name,
         BigDecimal amount,
-        String wallet,
-        BigDecimal purchaseMarketValue
+        String wallet
     ) {
         this.name = name;
         this.amount = amount;
         this.wallet = wallet;
-        this.creationDate = new Date();
-        this.purchaseMarketValue = purchaseMarketValue;
     }
 
     public Long getId() {
@@ -81,6 +85,10 @@ public class Crypto {
 
     public void setWallet(String wallet) {
         this.wallet = wallet;
+    }
+
+    public void setCreationDate(Date creationDate) {
+        this.creationDate = creationDate;
     }
 
     public Date getCreationDate() {
