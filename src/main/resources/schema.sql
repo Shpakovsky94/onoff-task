@@ -4,7 +4,6 @@ CREATE TABLE `crypto` (
                           `id` bigint NOT NULL AUTO_INCREMENT,
                           `amount` decimal(19,2) DEFAULT NULL,
                           `created_at` datetime(6) DEFAULT NULL,
-                          `current_market_value` decimal(19,2) DEFAULT NULL,
                           `name` varchar(150) DEFAULT NULL,
                           `purchase_market_value` decimal(19,2) DEFAULT NULL,
                           `wallet` varchar(255) DEFAULT NULL,

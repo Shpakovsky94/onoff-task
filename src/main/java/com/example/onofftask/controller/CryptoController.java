@@ -4,10 +4,9 @@ import com.example.onofftask.dto.CryptoDto;
 import com.example.onofftask.extention.EntityNotFoundException;
 import com.example.onofftask.model.Crypto;
 import com.example.onofftask.model.CryptoMapper;
-import com.example.onofftask.model.CryptoMarketValue;
 import com.example.onofftask.service.CryptoService;
 import com.example.onofftask.service.ParsingService;
-import java.net.URI;
+import java.math.BigDecimal;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -18,11 +17,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 @RestController
 @RequestMapping("/api/crypto")
@@ -46,28 +42,17 @@ public class CryptoController {
     public ResponseEntity<Crypto> getById(@PathVariable("id") Long id) {
             Crypto crypto = cryptoService.findById(id)
                                          .orElseThrow(()->new EntityNotFoundException(id));
-        return ResponseEntity.ok().body(crypto);
-    }
-
-    @RequestMapping(value="/entities",
-                    produces = "application/json",
-                    method= RequestMethod.GET)
-    @ResponseBody
-    public ResponseEntity<CryptoMarketValue> test(@RequestParam("symbol") String symbol) {
-        CryptoMarketValue crypto = parsingService.parseDataFromJson(symbol);
-
+            crypto.setCurrentMarketValue(cryptoService.getCryptoMarketValue(crypto.getName()));
         return ResponseEntity.ok().body(crypto);
     }
 
     @PostMapping(value="/entities")
-    public ResponseEntity<String> createEntity(@RequestBody CryptoDto cryptoDto) {
-        Crypto crypto = CryptoMapper.dtoToEntity(cryptoDto);
+    public Crypto createEntity(@RequestParam("name") String name,
+                                               @RequestParam("amount") String  amount,
+                                               @RequestParam("wallet") String wallet) {
+        Crypto crypto = new Crypto(name, new BigDecimal(amount), wallet);
         Crypto addedCrypto = cryptoService.save(crypto);
-        URI location = ServletUriComponentsBuilder.fromCurrentRequest()
-                                                  .path("/{id}")
-                                                  .buildAndExpand(addedCrypto.getId())
-                                                  .toUri();
-        return ResponseEntity.created(location).build();
+        return addedCrypto;
     }
 
     @PutMapping(value="/entities/{id}")
