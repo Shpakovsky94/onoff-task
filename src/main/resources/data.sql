@@ -4,5 +4,5 @@ INSERT INTO `cryptoexchange`.`crypto`
  `created_at`,
  `wallet`,
  `purchase_market_value`)
-VALUES ('tBTCEUR', 10, '2008-11-11 13:23:44', 'Cold wallet', 1.0001),
-       ('tBTCEUR', 2, '2008-11-11 13:25:44', 'Cold wallet', 1.0001);
+VALUES ('BTCEUR', 10, '2008-11-11 13:23:44', 'Cold wallet', 1.0001),
+       ('BTCEUR', 2, '2008-11-11 13:25:44', 'Cold wallet', 1.0001);

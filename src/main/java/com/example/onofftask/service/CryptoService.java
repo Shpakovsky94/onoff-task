@@ -1,5 +1,6 @@
 package com.example.onofftask.service;
 
+import com.example.onofftask.exception.EntityNotFoundException;
 import com.example.onofftask.model.Crypto;
 import java.math.BigDecimal;
 import java.util.List;
@@ -9,7 +10,7 @@ public interface CryptoService {
 
     List<Crypto> findAll();
 
-    Crypto findById(Long id);
+    Crypto findById(Long id) throws EntityNotFoundException;
 
     Crypto save(Crypto crypto);
 
@@ -21,7 +22,4 @@ public interface CryptoService {
         Crypto crypto,
         boolean getCurrentMarketPrice
     );
-
-    Map<String, Object> handleException(Exception exception);
-
 }

@@ -6,6 +6,7 @@ import com.example.onofftask.model.Crypto;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,17 +31,17 @@ public class CryptoServiceImpl implements CryptoService{
         List<Crypto> result = repository.findAll();
         for (Crypto c : result) {
             BigDecimal price        = getCryptoMarketValue(c.getName()) != null ? getCryptoMarketValue(c.getName()) : BigDecimal.ZERO;
-            BigDecimal currentPrice = price.multiply(c.getAmount());
+            BigDecimal currentPrice = price.multiply(BigDecimal.valueOf(c.getAmount()));
 
             c.setCurrentMarketPrice(currentPrice);
         }
         return result;
     }
 
-    @Override public Crypto findById(Long id) {
+    @Override public Crypto findById(Long id) throws EntityNotFoundException{
         Crypto     crypto       = repository.findById(id).orElseThrow(() -> new EntityNotFoundException(id));
         BigDecimal price        = getCryptoMarketValue(crypto.getName()) != null ? getCryptoMarketValue(crypto.getName()) : BigDecimal.ZERO;
-        BigDecimal currentPrice = price.multiply(crypto.getAmount());
+        BigDecimal currentPrice = price.multiply(BigDecimal.valueOf(crypto.getAmount()));
 
         crypto.setCurrentMarketPrice(currentPrice);
         return crypto;
@@ -67,7 +68,7 @@ public class CryptoServiceImpl implements CryptoService{
         Crypto crypto,
         boolean getCurrentMarketPrice
     ) {
-        Map<String, Object> result = new HashMap<>();
+        Map<String, Object> result = new LinkedHashMap<>();
 
         result.put("id", crypto.getId());
         result.put("name", crypto.getName());
@@ -75,17 +76,10 @@ public class CryptoServiceImpl implements CryptoService{
         result.put("created at", crypto.getCreationDate());
         result.put("wallet", crypto.getWallet());
         result.put("purchase market value", crypto.getPurchaseMarketValue());
+
         if (getCurrentMarketPrice) {
             result.put("currentMarketPrice", crypto.getCurrentMarketPrice());
         }
-        return result;
-    }
-
-    @Override
-    public Map<String, Object> handleException(Exception e) {
-        Map<String, Object> result = new HashMap<>();
-        result.put(e.getClass().getName(), e.getMessage());
-
         return result;
     }
 }

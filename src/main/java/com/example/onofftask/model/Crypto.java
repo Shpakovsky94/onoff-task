@@ -26,7 +26,7 @@ public class Crypto {
     private String name;
 
     @Column(name = "AMOUNT")
-    private BigDecimal amount;
+    private Double amount;
 
     @Column(name = "CREATED_AT")
     @Temporal(TemporalType.TIMESTAMP)
@@ -47,7 +47,7 @@ public class Crypto {
 
     public Crypto(
         String name,
-        BigDecimal amount,
+        Double amount,
         String wallet
     ) {
         this.name = name;
@@ -71,11 +71,11 @@ public class Crypto {
         this.name = name;
     }
 
-    public BigDecimal getAmount() {
+    public Double getAmount() {
         return amount;
     }
 
-    public void setAmount(BigDecimal amount) {
+    public void setAmount(Double amount) {
         this.amount = amount;
     }
 

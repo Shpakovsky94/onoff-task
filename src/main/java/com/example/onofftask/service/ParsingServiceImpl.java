@@ -1,9 +1,10 @@
 package com.example.onofftask.service;
 
 import com.example.onofftask.model.CryptoMarketValue;
-import com.example.onofftask.validator.DataValidator;
+import com.example.onofftask.resolver.StringResolver;
 import java.math.BigDecimal;
 import java.util.Arrays;
+import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -20,35 +21,55 @@ public class ParsingServiceImpl implements ParsingService {
 
     private static final Logger log = LoggerFactory.getLogger(ParsingServiceImpl.class);
 
-    @Value("${app.bitfine.url}")
-    private String bitfineUrl;
+    @Value("${app.bitfine.url.tickers}")
+    private String bitfineUrlTickers;
+
+    @Value("${app.bitfine.url.symbols}")
+    private String bitfineUrlSymbols;
 
     @Override
     public CryptoMarketValue parseDataFromJson(String symbolName) {
-        CryptoMarketValue dataFromJson = new CryptoMarketValue();
+        CryptoMarketValue cryptoMarketValue = new CryptoMarketValue();
+        List<String> valueList = parseDataFromJsonToArray(symbolName, false);
 
         try {
-            String jsonResult = getJsonFromApiBySymbol(symbolName);
-
-            jsonResult = jsonResult.replaceAll("[\\[\\]\\\\\"]", "");
-
-            DataValidator.validateString(jsonResult);
-
-            String[] value = jsonResult.split(",");
-            dataFromJson.setName(value[0]);
-            dataFromJson.setValueInEuros(new BigDecimal(value[2]));
+            cryptoMarketValue.setName(valueList.get(0));
+            cryptoMarketValue.setValueInEuros(new BigDecimal(valueList.get(2)));
         } catch (Exception e) {
             log.error("", e);
         }
-        return dataFromJson;
+        return cryptoMarketValue;
     }
 
-    private String getJsonFromApiBySymbol(String symbolName) {
-        String resp = "";
+    @Override
+    public List<String> parseDataFromJsonToArray(String symbolName, Boolean isSymbolsList) {
+        List<String> value = null;
         try {
-            DataValidator.validateString(symbolName);
+            String jsonResult = getJsonFromApiBySymbol(symbolName, isSymbolsList);
 
-            String       url          = bitfineUrl + "?symbols=" + symbolName;
+            jsonResult = jsonResult.replaceAll("[\\[\\]\\\\\"]", "");
+
+            StringResolver.validateString(jsonResult);
+
+             value = Arrays.asList(jsonResult.split(","));
+
+        } catch (Exception e) {
+            log.error("", e);
+        }
+        return value;
+    }
+
+    private String getJsonFromApiBySymbol(String symbolName, Boolean isSymbolsList) {
+        String resp = "";
+        String       url;
+        try {
+            StringResolver.validateString(symbolName);
+            if (isSymbolsList) {
+                url = bitfineUrlSymbols;
+            }else {
+                url = bitfineUrlTickers + "?symbols=t" + symbolName;
+            }
+
             RestTemplate restTemplate = new RestTemplate();
             HttpHeaders  headers      = new HttpHeaders();
             headers.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
