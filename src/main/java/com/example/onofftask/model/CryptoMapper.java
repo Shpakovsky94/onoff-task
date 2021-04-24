@@ -10,7 +10,7 @@ public class CryptoMapper {
             crypto.setName(cryptoDto.getName());
             crypto.setWallet(cryptoDto.getWallet());
             crypto.setAmount(cryptoDto.getAmount());
-            crypto.setCurrentMarketValue(cryptoDto.getCurrentMarketValue());
+            crypto.setCurrentMarketPrice(cryptoDto.getCurrentMarketValue());
             crypto.setPurchaseMarketValue(cryptoDto.getPurchaseMarketValue());
             return crypto;
         }
@@ -20,7 +20,7 @@ public class CryptoMapper {
             cryptoDto.setName(crypto.getName());
             cryptoDto.setWallet(crypto.getWallet());
             cryptoDto.setAmount(crypto.getAmount());
-            cryptoDto.setCurrentMarketValue(crypto.getCurrentMarketValue());
+            cryptoDto.setCurrentMarketValue(crypto.getCurrentMarketPrice());
             cryptoDto.setPurchaseMarketValue(crypto.getPurchaseMarketValue());
             return cryptoDto;
         }

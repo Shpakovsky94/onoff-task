@@ -1,11 +1,13 @@
 package com.example.onofftask.service;
 
 import com.example.onofftask.dao.CryptoDao;
+import com.example.onofftask.exception.EntityNotFoundException;
 import com.example.onofftask.model.Crypto;
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
-import java.util.Optional;
+import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -25,17 +27,29 @@ public class CryptoServiceImpl implements CryptoService{
     }
 
     @Override public List<Crypto> findAll() {
-        return repository.findAll();
+        List<Crypto> result = repository.findAll();
+        for (Crypto c : result) {
+            BigDecimal price        = getCryptoMarketValue(c.getName()) != null ? getCryptoMarketValue(c.getName()) : BigDecimal.ZERO;
+            BigDecimal currentPrice = price.multiply(c.getAmount());
+
+            c.setCurrentMarketPrice(currentPrice);
+        }
+        return result;
     }
 
-    @Override public Optional<Crypto> findById(Long id) {
-        return repository.findById(id);
+    @Override public Crypto findById(Long id) {
+        Crypto     crypto       = repository.findById(id).orElseThrow(() -> new EntityNotFoundException(id));
+        BigDecimal price        = getCryptoMarketValue(crypto.getName()) != null ? getCryptoMarketValue(crypto.getName()) : BigDecimal.ZERO;
+        BigDecimal currentPrice = price.multiply(crypto.getAmount());
+
+        crypto.setCurrentMarketPrice(currentPrice);
+        return crypto;
     }
 
     @Override public Crypto save(Crypto crypto) {
         crypto.setPurchaseMarketValue(getCryptoMarketValue(crypto.getName()));
         crypto.setCreationDate(new Date());
-//TODO: date returned in UTC
+        //TODO: date returned in UTC
         return repository.save(crypto);
     }
 
@@ -43,7 +57,35 @@ public class CryptoServiceImpl implements CryptoService{
         repository.deleteById(id);
     }
 
-    public BigDecimal getCryptoMarketValue(String name){
+    @Override
+    public BigDecimal getCryptoMarketValue(String name) {
         return parsingService.parseDataFromJson(name).getValueInEuros();
+    }
+
+    @Override
+    public Map<String, Object> getMapFromCrypto(
+        Crypto crypto,
+        boolean getCurrentMarketPrice
+    ) {
+        Map<String, Object> result = new HashMap<>();
+
+        result.put("id", crypto.getId());
+        result.put("name", crypto.getName());
+        result.put("amount", crypto.getAmount());
+        result.put("created at", crypto.getCreationDate());
+        result.put("wallet", crypto.getWallet());
+        result.put("purchase market value", crypto.getPurchaseMarketValue());
+        if (getCurrentMarketPrice) {
+            result.put("currentMarketPrice", crypto.getCurrentMarketPrice());
+        }
+        return result;
+    }
+
+    @Override
+    public Map<String, Object> handleException(Exception e) {
+        Map<String, Object> result = new HashMap<>();
+        result.put(e.getClass().getName(), e.getMessage());
+
+        return result;
     }
 }

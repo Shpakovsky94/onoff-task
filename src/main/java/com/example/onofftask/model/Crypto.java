@@ -28,19 +28,19 @@ public class Crypto {
     @Column(name = "AMOUNT")
     private BigDecimal amount;
 
-    @Column(name = "WALLET")
-    private String wallet;
-
     @Column(name = "CREATED_AT")
     @Temporal(TemporalType.TIMESTAMP)
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm")
     private Date creationDate;
 
+    @Column(name = "WALLET")
+    private String wallet;
+
     @Column(name = "PURCHASE_MARKET_VALUE")
     private BigDecimal purchaseMarketValue;
 
     @Transient
-    private BigDecimal currentMarketValue;
+    private BigDecimal currentMarketPrice;
 
     public Crypto() {
     }
@@ -103,11 +103,11 @@ public class Crypto {
         this.purchaseMarketValue = purchaseMarketValue;
     }
 
-    public BigDecimal getCurrentMarketValue() {
-        return currentMarketValue;
+    public BigDecimal getCurrentMarketPrice() {
+        return currentMarketPrice;
     }
 
-    public void setCurrentMarketValue(BigDecimal currentMarketValue) {
-        this.currentMarketValue = currentMarketValue;
+    public void setCurrentMarketPrice(BigDecimal currentMarketPrice) {
+        this.currentMarketPrice = currentMarketPrice;
     }
 }

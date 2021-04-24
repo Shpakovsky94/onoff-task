@@ -1,7 +1,7 @@
 package com.example.onofftask.service;
 
-import com.example.onofftask.extention.InvalidInputException;
 import com.example.onofftask.model.CryptoMarketValue;
+import com.example.onofftask.validator.DataValidator;
 import java.math.BigDecimal;
 import java.util.Arrays;
 import org.slf4j.Logger;
@@ -28,13 +28,11 @@ public class ParsingServiceImpl implements ParsingService {
         CryptoMarketValue dataFromJson = new CryptoMarketValue();
 
         try {
-            String   jsonResult = getJsonFromApiBySymbol(symbolName);
+            String jsonResult = getJsonFromApiBySymbol(symbolName);
 
-            if (jsonResult == null || jsonResult.isEmpty()) {
-                throw new InvalidInputException();
-            }
+            jsonResult = jsonResult.replaceAll("[\\[\\]\\\\\"]", "");
 
-            jsonResult = jsonResult.replaceAll("[\\[\\]\\\\\"]","");
+            DataValidator.validateString(jsonResult);
 
             String[] value = jsonResult.split(",");
             dataFromJson.setName(value[0]);
@@ -48,11 +46,9 @@ public class ParsingServiceImpl implements ParsingService {
     private String getJsonFromApiBySymbol(String symbolName) {
         String resp = "";
         try {
-            if (symbolName == null || symbolName.isEmpty()) {
-                throw new InvalidInputException();
-            }
+            DataValidator.validateString(symbolName);
 
-            String url = bitfineUrl + "?symbols=" + symbolName;
+            String       url          = bitfineUrl + "?symbols=" + symbolName;
             RestTemplate restTemplate = new RestTemplate();
             HttpHeaders  headers      = new HttpHeaders();
             headers.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
