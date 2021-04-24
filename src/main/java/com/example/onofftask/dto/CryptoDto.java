@@ -8,7 +8,7 @@ public class CryptoDto {
 
     private Long id;
     private String name;
-    private BigDecimal amount;
+    private Double amount;
     private String wallet;
     private Date creationDate;
     private BigDecimal purchaseMarketValue;
@@ -20,7 +20,7 @@ public class CryptoDto {
     public CryptoDto(
         Long id,
         String name,
-        BigDecimal amount,
+        Double amount,
         String wallet,
         Date creationDate,
         BigDecimal purchaseMarketValue,
@@ -51,11 +51,11 @@ public class CryptoDto {
         this.name = name;
     }
 
-    public BigDecimal getAmount() {
+    public Double getAmount() {
         return amount;
     }
 
-    public void setAmount(BigDecimal amount) {
+    public void setAmount(Double amount) {
         this.amount = amount;
     }
 
