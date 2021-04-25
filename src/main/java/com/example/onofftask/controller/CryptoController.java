@@ -8,6 +8,7 @@ import com.example.onofftask.service.CryptoService;
 import com.example.onofftask.resolver.ExceptionResolver;
 import com.example.onofftask.resolver.HttpRequestResolver;
 import com.example.onofftask.service.ParsingService;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
@@ -63,7 +64,7 @@ public class CryptoController {
     public Map<String, Object> createEntity(final HttpServletRequest request) {
 
         try {
-            String name = httpRequestResolver.getParam("name", request);
+            String name = httpRequestResolver.getParam("name", request).toUpperCase();
             Double amount = httpRequestResolver.getDoubleParam("amount", request);
             String wallet = httpRequestResolver.getParam("wallet", request);
             List<String> symbolsList = parsingService.parseDataFromJsonToArray(name, true);
@@ -94,9 +95,16 @@ public class CryptoController {
     }
 
     @DeleteMapping(value="/entities/{id}")
-    public ResponseEntity<String> deleteEntity(@PathVariable("id") Long id) {
-        Crypto crypto = cryptoService.findById(id);
-        cryptoService.deleteById(crypto.getId());
-        return ResponseEntity.ok().body("Entity  with ID : "+id+" deleted with success!");
+    public Map<String, Object>  deleteEntity(@PathVariable("id") Long id) {
+        Map<String, Object> result = new LinkedHashMap<>();
+        try {
+            Crypto crypto = cryptoService.findById(id);
+
+            cryptoService.deleteById(crypto.getId());
+            result.put("success", true);
+        } catch (Exception e) {
+            result = exceptionResolver.handleException(e);
+        }
+        return result;
     }
 }

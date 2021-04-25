@@ -28,17 +28,10 @@ public class ParsingServiceImpl implements ParsingService {
     private String bitfineUrlSymbols;
 
     @Override
-    public CryptoMarketValue parseDataFromJson(String symbolName) {
-        CryptoMarketValue cryptoMarketValue = new CryptoMarketValue();
+    public BigDecimal getCurrentMarketPriceFromApi(String symbolName) {
         List<String> valueList = parseDataFromJsonToArray(symbolName, false);
-
-        try {
-            cryptoMarketValue.setName(valueList.get(0));
-            cryptoMarketValue.setValueInEuros(new BigDecimal(valueList.get(2)));
-        } catch (Exception e) {
-            log.error("", e);
-        }
-        return cryptoMarketValue;
+        BigDecimal currentMarketPrice = new BigDecimal(valueList.get(2));
+        return currentMarketPrice != null ? currentMarketPrice : BigDecimal.ZERO;
     }
 
     @Override

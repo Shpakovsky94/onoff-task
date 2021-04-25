@@ -5,7 +5,6 @@ import com.example.onofftask.exception.EntityNotFoundException;
 import com.example.onofftask.model.Crypto;
 import java.math.BigDecimal;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -30,37 +29,30 @@ public class CryptoServiceImpl implements CryptoService{
     @Override public List<Crypto> findAll() {
         List<Crypto> result = repository.findAll();
         for (Crypto c : result) {
-            BigDecimal price        = getCryptoMarketValue(c.getName()) != null ? getCryptoMarketValue(c.getName()) : BigDecimal.ZERO;
-            BigDecimal currentPrice = price.multiply(BigDecimal.valueOf(c.getAmount()));
-
-            c.setCurrentMarketPrice(currentPrice);
+            c.setCurrentMarketPrice(getCryptoMarketValueLocal(c.getName(), c.getAmount()));
         }
         return result;
     }
 
     @Override public Crypto findById(Long id) throws EntityNotFoundException{
         Crypto     crypto       = repository.findById(id).orElseThrow(() -> new EntityNotFoundException(id));
-        BigDecimal price        = getCryptoMarketValue(crypto.getName()) != null ? getCryptoMarketValue(crypto.getName()) : BigDecimal.ZERO;
-        BigDecimal currentPrice = price.multiply(BigDecimal.valueOf(crypto.getAmount()));
-
-        crypto.setCurrentMarketPrice(currentPrice);
+        crypto.setCurrentMarketPrice(getCryptoMarketValueLocal(crypto.getName(), crypto.getAmount()));
         return crypto;
     }
 
     @Override public Crypto save(Crypto crypto) {
-        crypto.setPurchaseMarketValue(getCryptoMarketValue(crypto.getName()));
+        crypto.setPurchaseMarketValue(getCryptoMarketValueLocal(crypto.getName(), null));
         crypto.setCreationDate(new Date());
         //TODO: date returned in UTC
         return repository.save(crypto);
     }
 
-    @Override public void deleteById(Long id) {
-        repository.deleteById(id);
-    }
-
-    @Override
-    public BigDecimal getCryptoMarketValue(String name) {
-        return parsingService.parseDataFromJson(name).getValueInEuros();
+    @Override public void deleteById(Long id) throws EntityNotFoundException {
+        try {
+            repository.deleteById(id);
+        }catch (Exception ignore){
+            throw new EntityNotFoundException(id);
+        }
     }
 
     @Override
@@ -82,4 +74,15 @@ public class CryptoServiceImpl implements CryptoService{
         }
         return result;
     }
+
+    private BigDecimal getCryptoMarketValueLocal(final String name, final Double amount){
+       BigDecimal price = parsingService.getCurrentMarketPriceFromApi(name);
+        if (amount != null){
+            price = price.multiply(BigDecimal.valueOf(amount));
+        }
+        return price;
+
+    }
+
+
 }
