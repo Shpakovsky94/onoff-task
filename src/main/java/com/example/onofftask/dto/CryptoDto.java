@@ -1,38 +1,34 @@
 package com.example.onofftask.dto;
 
 import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.TimeZone;
 
 
 public class CryptoDto {
+
+    private static final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm");
 
     private Long id;
     private String name;
     private Double amount;
     private String wallet;
-    private Date creationDate;
+    private String  creationDate;
     private BigDecimal purchaseMarketValue;
-    private BigDecimal currentMarketValue;
+    private BigDecimal currentMarketPrice;
 
     public CryptoDto() {
     }
 
     public CryptoDto(
-        Long id,
         String name,
         Double amount,
-        String wallet,
-        Date creationDate,
-        BigDecimal purchaseMarketValue,
-        BigDecimal currentMarketValue
+        String wallet
     ) {
-        this.id = id;
         this.name = name;
         this.amount = amount;
         this.wallet = wallet;
-        this.creationDate = creationDate;
-        this.purchaseMarketValue = purchaseMarketValue;
-        this.currentMarketValue = currentMarketValue;
     }
 
     public Long getId() {
@@ -67,11 +63,11 @@ public class CryptoDto {
         this.wallet = wallet;
     }
 
-    public Date getCreationDate() {
+    public String getCreationDate() {
         return creationDate;
     }
 
-    public void setCreationDate(Date creationDate) {
+    public void setCreationDate(String creationDate) {
         this.creationDate = creationDate;
     }
 
@@ -83,11 +79,11 @@ public class CryptoDto {
         this.purchaseMarketValue = purchaseMarketValue;
     }
 
-    public BigDecimal getCurrentMarketValue() {
-        return currentMarketValue;
+    public BigDecimal getCurrentMarketPrice() {
+        return currentMarketPrice;
     }
 
-    public void setCurrentMarketValue(BigDecimal currentMarketValue) {
-        this.currentMarketValue = currentMarketValue;
+    public void setCurrentMarketPrice(BigDecimal currentMarketPrice) {
+        this.currentMarketPrice = currentMarketPrice;
     }
 }

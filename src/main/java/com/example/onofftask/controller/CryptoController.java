@@ -1,25 +1,20 @@
 package com.example.onofftask.controller;
 
 import com.example.onofftask.dto.CryptoDto;
-import com.example.onofftask.exception.InvalidNameException;
 import com.example.onofftask.model.Crypto;
-import com.example.onofftask.model.CryptoMapper;
-import com.example.onofftask.service.CryptoService;
 import com.example.onofftask.resolver.ExceptionResolver;
-import com.example.onofftask.resolver.HttpRequestResolver;
+import com.example.onofftask.service.CryptoServiceHelper;
 import com.example.onofftask.service.ParsingService;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -27,35 +22,32 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/crypto")
 public class CryptoController {
 
-    private final CryptoService       cryptoService;
-    private final HttpRequestResolver httpRequestResolver;
-    private final ExceptionResolver exceptionResolver;
+    private final CryptoServiceHelper cryptoServiceHelper;
+    private final ExceptionResolver   exceptionResolver;
     private final ParsingService    parsingService;
 
     @Autowired
     public CryptoController(
-        CryptoService cryptoService,
-        HttpRequestResolver httpRequestResolver,
+        CryptoServiceHelper cryptoServiceHelper,
         ExceptionResolver exceptionResolver,
         ParsingService parsingService
     ) {
-        this.cryptoService = cryptoService;
-        this.httpRequestResolver = httpRequestResolver;
+        this.cryptoServiceHelper = cryptoServiceHelper;
         this.exceptionResolver = exceptionResolver;
         this.parsingService = parsingService;
     }
 
-    @GetMapping(value="/show-entities")
-    public List<Crypto> getAll(){
-        return cryptoService.findAll();
+    @GetMapping(value = "/show-entities")
+    public List<CryptoDto> getAll() {
+        return cryptoServiceHelper.findAll();
     }
 
     @GetMapping(value = "/entities/{id}")
     public Map<String, Object> getById(@PathVariable("id") Long id) {
         try {
-            Crypto crypto = cryptoService.findById(id);
-            return cryptoService.getMapFromCrypto(crypto, false);
-        }catch (Exception e){
+            CryptoDto dto = cryptoServiceHelper.findById(id);
+            return cryptoServiceHelper.getMapFromCrypto(dto, true);
+        } catch (Exception e) {
             return exceptionResolver.handleException(e);
         }
     }
@@ -64,17 +56,10 @@ public class CryptoController {
     public Map<String, Object> createEntity(final HttpServletRequest request) {
 
         try {
-            String name = httpRequestResolver.getParam("name", request).toUpperCase();
-            Double amount = httpRequestResolver.getDoubleParam("amount", request);
-            String wallet = httpRequestResolver.getParam("wallet", request);
-            List<String> symbolsList = parsingService.parseDataFromJsonToArray(name, true);
-            if (!symbolsList.contains(name.toLowerCase())){
-                throw new InvalidNameException();
-            }
+            Crypto validatedCrypto = parsingService.validateParamsAndReturnCrypto(request);
+            CryptoDto addedCryptoDto     = cryptoServiceHelper.save(validatedCrypto);
 
-                Crypto addedCrypto = cryptoService.save(new Crypto(name, amount, wallet));
-
-            return cryptoService.getMapFromCrypto(addedCrypto, false);
+            return cryptoServiceHelper.getMapFromCrypto(addedCryptoDto, false);
 
         } catch (Exception e) {
             return exceptionResolver.handleException(e);
@@ -82,25 +67,30 @@ public class CryptoController {
     }
 
     @PutMapping(value = "/entities/{id}")
-    public ResponseEntity<Crypto> updateEntity(
+    public Map<String, Object> updateEntity(
         @PathVariable("id") Long id,
-        @RequestBody CryptoDto cryptoDto
+        final HttpServletRequest request
     ) {
-        Crypto prd = cryptoService.findById(id);
 
-        Crypto newCrypto = CryptoMapper.dtoToEntity(cryptoDto);
-        newCrypto.setId(prd.getId());
-        cryptoService.save(newCrypto);
-        return ResponseEntity.ok().body(newCrypto);
+        try {
+            CryptoDto cryptoToUpdate = cryptoServiceHelper.findById(id);
+            Crypto newCrypto      = parsingService.validateParamsAndReturnCrypto(request);
+
+            newCrypto.setId(cryptoToUpdate.getId());
+            CryptoDto updatedCrypto = cryptoServiceHelper.save(newCrypto);
+            return cryptoServiceHelper.getMapFromCrypto(updatedCrypto, false);
+        } catch (Exception e) {
+            return exceptionResolver.handleException(e);
+        }
     }
 
-    @DeleteMapping(value="/entities/{id}")
-    public Map<String, Object>  deleteEntity(@PathVariable("id") Long id) {
+    @DeleteMapping(value = "/entities/{id}")
+    public Map<String, Object> deleteEntity(@PathVariable("id") Long id) {
         Map<String, Object> result = new LinkedHashMap<>();
         try {
-            Crypto crypto = cryptoService.findById(id);
+            CryptoDto crypto = cryptoServiceHelper.findById(id);
 
-            cryptoService.deleteById(crypto.getId());
+            cryptoServiceHelper.deleteById(crypto.getId());
             result.put("success", true);
         } catch (Exception e) {
             result = exceptionResolver.handleException(e);

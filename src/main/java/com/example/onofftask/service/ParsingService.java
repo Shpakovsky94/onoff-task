@@ -1,13 +1,14 @@
 package com.example.onofftask.service;
 
-import com.example.onofftask.model.CryptoMarketValue;
+import com.example.onofftask.exception.InvalidInputException;
+import com.example.onofftask.exception.InvalidNameException;
+import com.example.onofftask.model.Crypto;
 import java.math.BigDecimal;
 import java.util.List;
+import javax.servlet.http.HttpServletRequest;
 
 public interface ParsingService {
-    /**
-     * Parse Json into List of Tweets
-     */
+    Crypto validateParamsAndReturnCrypto(HttpServletRequest request) throws InvalidInputException, InvalidNameException;
 
     BigDecimal getCurrentMarketPriceFromApi(String symbolName);
 

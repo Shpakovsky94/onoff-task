@@ -1,6 +1,7 @@
 package com.example.onofftask.resolver;
 
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,7 +14,7 @@ public class ExceptionResolver {
     public Map<String, Object> handleException(Exception e) {
         log.error(e.getClass().getSimpleName(), e);
 
-        Map<String, Object> result = new HashMap<>();
+        Map<String, Object> result = new LinkedHashMap<>();
         result.put(e.getClass().getSimpleName(), e.getMessage());
 
         return result;
