@@ -8,8 +8,9 @@ public class EntityNotFoundException extends RuntimeException {
     private final String message;
 
     public EntityNotFoundException(Long id) {
-        this.message = "No Entity with ID : "+id;
+        this.message = "No Entity with ID : " + id;
     }
+
     @Override
     public String getMessage() {
         return message;

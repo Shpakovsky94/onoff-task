@@ -1,11 +1,9 @@
 package com.example.onofftask.service;
 
-import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-import com.example.onofftask.controller.CryptoController;
 import com.example.onofftask.dto.CryptoDto;
 import com.example.onofftask.mapper.CryptoMapper;
 import com.example.onofftask.model.Crypto;
@@ -28,15 +26,15 @@ class CryptoServiceHelperImplTest {
     CryptoServiceHelperImpl target;
 
     @Mock
-    HttpServletRequest  req;
+    HttpServletRequest req;
     @Mock
-    CryptoMapper  mapper;
+    CryptoMapper       mapper;
     @Mock
-    CryptoService cryptoService;
+    CryptoService      cryptoService;
     @Mock
-    ExceptionResolver   exceptionResolver;
+    ExceptionResolver  exceptionResolver;
     @Mock
-    ParsingService parsingService;
+    ParsingService     parsingService;
 
 
     @BeforeEach
@@ -46,7 +44,7 @@ class CryptoServiceHelperImplTest {
         cryptoService = mock(CryptoService.class);
         exceptionResolver = mock(ExceptionResolver.class);
         parsingService = mock(ParsingService.class);
-        target = new CryptoServiceHelperImpl(cryptoService, parsingService , mapper);
+        target = new CryptoServiceHelperImpl(cryptoService, parsingService, mapper);
     }
 
     @Test
@@ -69,8 +67,8 @@ class CryptoServiceHelperImplTest {
 
     @Test
     void findById() {
-        Crypto crypto1 = new Crypto("BTCEUR", 10.2, "1");
-        CryptoDto       dto1          = new CryptoDto("BTCEUR", 10.2, "1");
+        Crypto    crypto1 = new Crypto("BTCEUR", 10.2, "1");
+        CryptoDto dto1    = new CryptoDto("BTCEUR", 10.2, "1");
 
         when(cryptoService.findById(1L)).thenReturn(crypto1);
         when(mapper.convertToDto(crypto1)).thenReturn(dto1);
@@ -82,8 +80,8 @@ class CryptoServiceHelperImplTest {
 
     @Test
     void save() {
-        Crypto crypto1 = new Crypto("BTCEUR", 10.2, "1");
-        CryptoDto       dto1          = new CryptoDto("BTCEUR", 10.2, "1");
+        Crypto    crypto1 = new Crypto("BTCEUR", 10.2, "1");
+        CryptoDto dto1    = new CryptoDto("BTCEUR", 10.2, "1");
 
         when(parsingService.getCurrentMarketPriceFromApi("BTCEUR")).thenReturn(BigDecimal.TEN);
         when(cryptoService.save(crypto1)).thenReturn(crypto1);
@@ -102,16 +100,16 @@ class CryptoServiceHelperImplTest {
 
     @Test
     void getMapFromCrypto_getCurrentMarketPrice_is_true() {
-        CryptoDto       dto1          = new CryptoDto("BTCEUR", 10.2, "1");
+        CryptoDto dto1 = new CryptoDto("BTCEUR", 10.2, "1");
         dto1.setCurrentMarketPrice(BigDecimal.TEN);
 
         Map<String, Object> result = target.getMapFromCrypto(dto1, true);
-        Assertions.assertEquals(result.get("currentMarketPrice"), BigDecimal.TEN);
+        Assertions.assertEquals(BigDecimal.TEN, result.get("currentMarketPrice"));
     }
 
     @Test
     void getMapFromCrypto_getCurrentMarketPrice_is_false() {
-        CryptoDto       dto1          = new CryptoDto("BTCEUR", 10.2, "1");
+        CryptoDto dto1 = new CryptoDto("BTCEUR", 10.2, "1");
         dto1.setCurrentMarketPrice(BigDecimal.TEN);
 
         Map<String, Object> result = target.getMapFromCrypto(dto1, false);
