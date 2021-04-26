@@ -10,10 +10,6 @@ import javax.servlet.http.HttpServletRequest;
 public interface ParsingService {
     Crypto validateParamsAndReturnCrypto(HttpServletRequest request) throws InvalidInputException, InvalidNameException;
 
-    /**
-     * Parse Json into List of Tweets
-     */
-
     BigDecimal getCurrentMarketPriceFromApi(String symbolName);
 
     List<String> parseDataFromJsonToArray(

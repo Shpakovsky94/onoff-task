@@ -15,9 +15,4 @@ public interface CryptoService {
     Crypto save(Crypto crypto);
 
     void deleteById(Long id) throws EntityNotFoundException;
-
-    Map<String, Object> getMapFromCrypto(
-        Crypto crypto,
-        boolean getCurrentMarketPrice
-    );
 }

@@ -34,9 +34,15 @@ public class ParsingServiceImpl implements ParsingService {
 
     private final HttpRequestResolver httpRequestResolver;
 
+    private final RestTemplate restTemplate;
+
     @Autowired
-    public ParsingServiceImpl(HttpRequestResolver httpRequestResolver) {
+    public ParsingServiceImpl(
+        HttpRequestResolver httpRequestResolver,
+        RestTemplate restTemplate
+    ) {
         this.httpRequestResolver = httpRequestResolver;
+        this.restTemplate = restTemplate;
     }
 
     @Override
@@ -45,6 +51,7 @@ public class ParsingServiceImpl implements ParsingService {
         Double       amount      = httpRequestResolver.getDoubleParam("amount", request);
         String       wallet      = httpRequestResolver.getParam("wallet", request);
         List<String> symbolsList = parseDataFromJsonToArray(name, true);
+
         if (!symbolsList.contains(name.toLowerCase())) {
             throw new InvalidNameException();
         }
@@ -55,7 +62,7 @@ public class ParsingServiceImpl implements ParsingService {
     public BigDecimal getCurrentMarketPriceFromApi(String symbolName) {
         List<String> valueList = parseDataFromJsonToArray(symbolName, false);
 
-        return !valueList.isEmpty() ? new BigDecimal(valueList.get(2)) : BigDecimal.ZERO;
+        return valueList != null && !valueList.isEmpty() ? new BigDecimal(valueList.get(1)) : BigDecimal.ZERO;
     }
 
     @Override
@@ -67,10 +74,7 @@ public class ParsingServiceImpl implements ParsingService {
         try {
             String jsonResult = getJsonFromApiBySymbol(symbolName, isSymbolsList);
 
-            jsonResult = jsonResult.replaceAll("[\\[\\]\\\\\"]", "");
-
-            StringResolver.validateString(jsonResult);
-
+            jsonResult = jsonResult.replaceAll("[\\s\\[\\]\\\\\"]", "");
             valueList = Arrays.asList(jsonResult.split(","));
         } catch (Exception e) {
             log.error("", e);
@@ -89,7 +93,6 @@ public class ParsingServiceImpl implements ParsingService {
                 url = bitfineUrlTickers + "?symbols=t" + symbolName;
             }
 
-            RestTemplate restTemplate = new RestTemplate();
             HttpHeaders  headers      = new HttpHeaders();
             headers.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
             headers.add("user-agent", "PostmanRuntime/7.26.8");

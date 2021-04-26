@@ -1,8 +1,9 @@
 package com.example.onofftask.controller;
 
+import com.example.onofftask.dto.CryptoDto;
 import com.example.onofftask.model.Crypto;
 import com.example.onofftask.resolver.ExceptionResolver;
-import com.example.onofftask.service.CryptoService;
+import com.example.onofftask.service.CryptoServiceHelper;
 import com.example.onofftask.service.ParsingService;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -21,31 +22,31 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/crypto")
 public class CryptoController {
 
-    private final CryptoService     cryptoService;
-    private final ExceptionResolver exceptionResolver;
+    private final CryptoServiceHelper cryptoServiceHelper;
+    private final ExceptionResolver   exceptionResolver;
     private final ParsingService    parsingService;
 
     @Autowired
     public CryptoController(
-        CryptoService cryptoService,
+        CryptoServiceHelper cryptoServiceHelper,
         ExceptionResolver exceptionResolver,
         ParsingService parsingService
     ) {
-        this.cryptoService = cryptoService;
+        this.cryptoServiceHelper = cryptoServiceHelper;
         this.exceptionResolver = exceptionResolver;
         this.parsingService = parsingService;
     }
 
     @GetMapping(value = "/show-entities")
-    public List<Crypto> getAll() {
-        return cryptoService.findAll();
+    public List<CryptoDto> getAll() {
+        return cryptoServiceHelper.findAll();
     }
 
     @GetMapping(value = "/entities/{id}")
     public Map<String, Object> getById(@PathVariable("id") Long id) {
         try {
-            Crypto crypto = cryptoService.findById(id);
-            return cryptoService.getMapFromCrypto(crypto, true);
+            CryptoDto dto = cryptoServiceHelper.findById(id);
+            return cryptoServiceHelper.getMapFromCrypto(dto, true);
         } catch (Exception e) {
             return exceptionResolver.handleException(e);
         }
@@ -56,9 +57,9 @@ public class CryptoController {
 
         try {
             Crypto validatedCrypto = parsingService.validateParamsAndReturnCrypto(request);
-            Crypto addedCrypto     = cryptoService.save(validatedCrypto);
+            CryptoDto addedCryptoDto     = cryptoServiceHelper.save(validatedCrypto);
 
-            return cryptoService.getMapFromCrypto(addedCrypto, false);
+            return cryptoServiceHelper.getMapFromCrypto(addedCryptoDto, false);
 
         } catch (Exception e) {
             return exceptionResolver.handleException(e);
@@ -72,13 +73,12 @@ public class CryptoController {
     ) {
 
         try {
-            Crypto cryptoToUpdate = cryptoService.findById(id);
+            CryptoDto cryptoToUpdate = cryptoServiceHelper.findById(id);
             Crypto newCrypto      = parsingService.validateParamsAndReturnCrypto(request);
 
-//            Crypto updatedCrypto = CryptoMapper.dtoToEntity(cryptoToUpdate);
             newCrypto.setId(cryptoToUpdate.getId());
-            Crypto updatedCrypto = cryptoService.save(newCrypto);
-            return cryptoService.getMapFromCrypto(updatedCrypto, false);
+            CryptoDto updatedCrypto = cryptoServiceHelper.save(newCrypto);
+            return cryptoServiceHelper.getMapFromCrypto(updatedCrypto, false);
         } catch (Exception e) {
             return exceptionResolver.handleException(e);
         }
@@ -88,9 +88,9 @@ public class CryptoController {
     public Map<String, Object> deleteEntity(@PathVariable("id") Long id) {
         Map<String, Object> result = new LinkedHashMap<>();
         try {
-            Crypto crypto = cryptoService.findById(id);
+            CryptoDto crypto = cryptoServiceHelper.findById(id);
 
-            cryptoService.deleteById(crypto.getId());
+            cryptoServiceHelper.deleteById(crypto.getId());
             result.put("success", true);
         } catch (Exception e) {
             result = exceptionResolver.handleException(e);

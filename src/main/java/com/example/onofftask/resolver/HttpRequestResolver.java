@@ -20,7 +20,7 @@ public class HttpRequestResolver {
     public Double getDoubleParam(final String name, final HttpServletRequest request) throws InvalidInputException {
         String s = getParam(name, request);
 
-        if (s != null && !s.isEmpty()&& !s.equals("0")) {
+        if (s != null && !s.isEmpty() && !s.equals("0")) {
             return Double.valueOf(s);
         } else {
             throw new InvalidInputException();
