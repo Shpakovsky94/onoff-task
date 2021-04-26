@@ -24,7 +24,7 @@ public class CryptoController {
 
     private final CryptoServiceHelper cryptoServiceHelper;
     private final ExceptionResolver   exceptionResolver;
-    private final ParsingService    parsingService;
+    private final ParsingService      parsingService;
 
     @Autowired
     public CryptoController(
@@ -56,8 +56,8 @@ public class CryptoController {
     public Map<String, Object> createEntity(final HttpServletRequest request) {
 
         try {
-            Crypto validatedCrypto = parsingService.validateParamsAndReturnCrypto(request);
-            CryptoDto addedCryptoDto     = cryptoServiceHelper.save(validatedCrypto);
+            Crypto    validatedCrypto = parsingService.validateParamsAndReturnCrypto(request);
+            CryptoDto addedCryptoDto  = cryptoServiceHelper.save(validatedCrypto);
 
             return cryptoServiceHelper.getMapFromCrypto(addedCryptoDto, false);
 
@@ -74,7 +74,7 @@ public class CryptoController {
 
         try {
             CryptoDto cryptoToUpdate = cryptoServiceHelper.findById(id);
-            Crypto newCrypto      = parsingService.validateParamsAndReturnCrypto(request);
+            Crypto    newCrypto      = parsingService.validateParamsAndReturnCrypto(request);
 
             newCrypto.setId(cryptoToUpdate.getId());
             CryptoDto updatedCrypto = cryptoServiceHelper.save(newCrypto);

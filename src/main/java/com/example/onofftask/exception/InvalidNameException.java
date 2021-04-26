@@ -1,7 +1,5 @@
 package com.example.onofftask.exception;
 
-import org.springframework.beans.factory.annotation.Value;
-
 public class InvalidNameException extends Exception {
 
     private final String message;

@@ -114,7 +114,7 @@ class CryptoControllerTest {
         when(cryptoServiceHelper.findById(1L)).thenReturn(dto1);
         doNothing().when(cryptoServiceHelper).deleteById(1L);
         Map<String, Object> result = target.deleteEntity(1L);
-        Assertions.assertEquals(result.get("success"), true);
+        Assertions.assertEquals(true, result.get("success"));
 
     }
 }

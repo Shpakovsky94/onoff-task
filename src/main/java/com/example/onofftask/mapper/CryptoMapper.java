@@ -10,7 +10,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class CryptoMapper {
 
-    private final ModelMapper modelMapper;
+    private final ModelMapper  modelMapper;
     private final DateResolver dateResolver;
 
     @Autowired
@@ -27,5 +27,5 @@ public class CryptoMapper {
         cryptoDto.setCreationDate(dateResolver.truncateTime(crypto.getCreationDate()));
         return cryptoDto;
     }
-    }
+}
 

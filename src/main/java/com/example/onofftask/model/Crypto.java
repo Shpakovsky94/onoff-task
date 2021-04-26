@@ -20,7 +20,7 @@ public class Crypto {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "ID")
-    private  Long id;
+    private Long id;
 
     @Column(name = "NAME", length = 150)
     private String name;
@@ -87,12 +87,12 @@ public class Crypto {
         this.wallet = wallet;
     }
 
-    public void setCreationDate(Date creationDate) {
-        this.creationDate = creationDate;
-    }
-
     public Date getCreationDate() {
         return creationDate;
+    }
+
+    public void setCreationDate(Date creationDate) {
+        this.creationDate = creationDate;
     }
 
     public BigDecimal getPurchaseMarketValue() {

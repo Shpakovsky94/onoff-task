@@ -8,14 +8,13 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class DateResolver {
-    private static final Logger           log        = LoggerFactory.getLogger(ExceptionResolver.class);
-    private static final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+    private static final Logger log = LoggerFactory.getLogger(DateResolver.class);
 
     public String truncateTime(Date date) {
 
         String result = "";
         try {
-            result = dateFormat.format(date);
+            result = new SimpleDateFormat("yyyy-MM-dd HH:mm").format(date);
         } catch (Exception e) {
             log.error("", e);
         }

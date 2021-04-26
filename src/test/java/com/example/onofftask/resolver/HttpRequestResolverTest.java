@@ -1,7 +1,5 @@
 package com.example.onofftask.resolver;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 import com.example.onofftask.exception.InvalidInputException;
 import javax.servlet.http.HttpServletRequest;
 import org.junit.jupiter.api.Assertions;

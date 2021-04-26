@@ -1,20 +1,15 @@
 package com.example.onofftask.dto;
 
 import java.math.BigDecimal;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.TimeZone;
 
 
 public class CryptoDto {
 
-    private static final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm");
-
-    private Long id;
-    private String name;
-    private Double amount;
-    private String wallet;
-    private String  creationDate;
+    private Long       id;
+    private String     name;
+    private Double     amount;
+    private String     wallet;
+    private String     creationDate;
     private BigDecimal purchaseMarketValue;
     private BigDecimal currentMarketPrice;
 

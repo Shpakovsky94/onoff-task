@@ -25,16 +25,12 @@ import org.springframework.web.client.RestTemplate;
 public class ParsingServiceImpl implements ParsingService {
 
     private static final Logger log = LoggerFactory.getLogger(ParsingServiceImpl.class);
-
+    private final HttpRequestResolver httpRequestResolver;
+    private final RestTemplate restTemplate;
     @Value("${app.bitfine.url.tickers}")
     private String bitfineUrlTickers;
-
     @Value("${app.bitfine.url.symbols}")
     private String bitfineUrlSymbols;
-
-    private final HttpRequestResolver httpRequestResolver;
-
-    private final RestTemplate restTemplate;
 
     @Autowired
     public ParsingServiceImpl(
@@ -82,18 +78,21 @@ public class ParsingServiceImpl implements ParsingService {
         return valueList;
     }
 
-    private String getJsonFromApiBySymbol(String symbolName, Boolean isSymbolsList) {
+    private String getJsonFromApiBySymbol(
+        String symbolName,
+        Boolean isSymbolsList
+    ) {
         String resp = "";
-        String       url;
+        String url;
         try {
             StringResolver.validateString(symbolName);
             if (isSymbolsList) {
                 url = bitfineUrlSymbols;
-            }else {
+            } else {
                 url = bitfineUrlTickers + "?symbols=t" + symbolName;
             }
 
-            HttpHeaders  headers      = new HttpHeaders();
+            HttpHeaders headers = new HttpHeaders();
             headers.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
             headers.add("user-agent", "PostmanRuntime/7.26.8");
             HttpEntity<String> entity = new HttpEntity<>("parameters", headers);

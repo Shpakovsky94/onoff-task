@@ -2,9 +2,8 @@ package com.example.onofftask.service;
 
 import com.example.onofftask.dto.CryptoDto;
 import com.example.onofftask.exception.EntityNotFoundException;
-import com.example.onofftask.model.Crypto;
 import com.example.onofftask.mapper.CryptoMapper;
-import com.example.onofftask.resolver.DateResolver;
+import com.example.onofftask.model.Crypto;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
@@ -17,15 +16,16 @@ import org.springframework.stereotype.Service;
 @Service
 public class CryptoServiceHelperImpl implements CryptoServiceHelper {
 
-    private final CryptoService      cryptoService;
+    private final CryptoService  cryptoService;
     private final ParsingService parsingService;
-    private final CryptoMapper mapper;
+    private final CryptoMapper   mapper;
 
     @Autowired
     public CryptoServiceHelperImpl(
         CryptoService cryptoService,
         ParsingService parsingService,
-        CryptoMapper mapper) {
+        CryptoMapper mapper
+    ) {
         this.cryptoService = cryptoService;
         this.parsingService = parsingService;
         this.mapper = mapper;
@@ -33,10 +33,10 @@ public class CryptoServiceHelperImpl implements CryptoServiceHelper {
 
     @Override
     public List<CryptoDto> findAll() {
-        List<Crypto> cryptoList = cryptoService.findAll();
-        List<CryptoDto> result  = new ArrayList<>();
+        List<Crypto>    cryptoList = cryptoService.findAll();
+        List<CryptoDto> result     = new ArrayList<>();
         for (Crypto c : cryptoList) {
-            CryptoDto dto =mapper.convertToDto(c);
+            CryptoDto dto = mapper.convertToDto(c);
             dto.setCurrentMarketPrice(getCryptoMarketValueLocal(c.getName(), c.getAmount()));
             result.add(dto);
         }
