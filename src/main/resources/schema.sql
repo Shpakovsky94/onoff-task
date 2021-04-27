@@ -1,3 +1,10 @@
+drop
+database if exists cryptoExchange;
+create
+database cryptoExchange;
+use
+cryptoExchange;
+
 DROP TABLE if exists `crypto`;
 
 CREATE TABLE `crypto`

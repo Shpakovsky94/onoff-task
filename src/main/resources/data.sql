@@ -1,4 +1,4 @@
-INSERT INTO `cryptoexchange`.`crypto`
+INSERT INTO `cryptoExchange`.`crypto`
 (`name`,
  `amount`,
  `created_at`,

@@ -85,6 +85,7 @@
     </dependencies>
 
     <build>
+        <finalName>onoff-spring-boot</finalName>
         <plugins>
             <plugin>
                 <groupId>org.springframework.boot</groupId>
