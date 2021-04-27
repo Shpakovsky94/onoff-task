@@ -1,0 +1,29 @@
+version: "3"
+services:
+    mysqldb:
+        image: mysql:8
+        networks:
+            - onoff-mysql
+        environment:
+            - MYSQL_ROOT_PASSWORD=rootroot
+            - MYSQL_DATABASE=cryptoExchange
+            - MYSQL_USER=myapp-root
+            - MYSQL_PASSWORD=rootroot
+
+    onoff-spring-boot:
+        image: onoff-spring-boot
+        ports:
+            - "8050:8050"
+        networks:
+            - onoff-mysql
+        environment:
+            - DATABASE_HOST=onoff-mysql
+            - DATABASE_USER=root
+            - DATABASE_PASSWORD=rootroot
+            - DATABASE_NAME=cryptoExchange
+            - SPRING_DATASOURCE_URL=jdbc:mysql://mysqldb/cryptoExchange?createDatabaseIfNotExist=true&useSSL=false&useUnicode=yes&characterEncoding=UTF-8&allowPublicKeyRetrieval=true&useLegacyDatetimeCode=false&serverTimezone=Europe/Kiev
+
+        depends_on:
+            - mysqldb
+networks:
+    onoff-mysql:

@@ -21,6 +21,6 @@ class DateResolverTest {
     void truncateTimeTest_with_incorrectInput() {
         Date   date   = new Date(1L);
         String result = target.truncateTime(date);
-        Assertions.assertEquals("1970-01-01 03:00", result);
+        Assertions.assertEquals("1970-01-01 02:00", result);
     }
 }
