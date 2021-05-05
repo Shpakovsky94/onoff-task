@@ -10,8 +10,8 @@ import com.example.onofftask.exception.InvalidInputException;
 import com.example.onofftask.exception.InvalidNameException;
 import com.example.onofftask.model.Crypto;
 import com.example.onofftask.resolver.ExceptionResolver;
-import com.example.onofftask.service.CryptoServiceHelper;
-import com.example.onofftask.service.ParsingService;
+import com.example.onofftask.service.BitfinexService;
+import com.example.onofftask.service.CryptoService;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -27,24 +27,24 @@ import org.mockito.junit.MockitoJUnitRunner;
 @RunWith(MockitoJUnitRunner.class)
 class CryptoControllerTest {
 
-    CryptoController target;
+    CryptoController controller;
 
     @Mock
-    HttpServletRequest  req;
+    HttpServletRequest req;
     @Mock
-    CryptoServiceHelper cryptoServiceHelper;
+    CryptoService      cryptoService;
     @Mock
-    ExceptionResolver   exceptionResolver;
+    ExceptionResolver  exceptionResolver;
     @Mock
-    ParsingService      parsingService;
+    BitfinexService    bitfinexService;
 
     @BeforeEach
     public void setUp() {
         req = mock(HttpServletRequest.class);
-        cryptoServiceHelper = mock(CryptoServiceHelper.class);
+        cryptoService = mock(CryptoService.class);
         exceptionResolver = mock(ExceptionResolver.class);
-        parsingService = mock(ParsingService.class);
-        target = new CryptoController(cryptoServiceHelper, exceptionResolver, parsingService);
+        bitfinexService = mock(BitfinexService.class);
+        controller = new CryptoController(cryptoService, exceptionResolver, bitfinexService);
     }
 
     @Test
@@ -56,9 +56,9 @@ class CryptoControllerTest {
         cryptoDtoList.add(dto1);
         cryptoDtoList.add(dto2);
         cryptoDtoList.add(dto3);
-        when(cryptoServiceHelper.findAll()).thenReturn(cryptoDtoList);
+        when(cryptoService.findAll()).thenReturn(cryptoDtoList);
 
-        List<CryptoDto> result = target.getAll();
+        List<CryptoDto> result = controller.getAll();
         Assertions.assertEquals(result.size(), cryptoDtoList.size());
     }
 
@@ -68,10 +68,10 @@ class CryptoControllerTest {
         Map<String, Object> testMap = new LinkedHashMap<>();
         testMap.put("mock-key", "mock-value");
 
-        when(cryptoServiceHelper.findById(1L)).thenReturn(dto1);
-        when(cryptoServiceHelper.getMapFromCrypto(dto1, true)).thenReturn(testMap);
+        when(cryptoService.findById(1L)).thenReturn(dto1);
+        when(cryptoService.getMapFromCrypto(dto1, true)).thenReturn(testMap);
 
-        Map<String, Object> result = target.getById(1L);
+        Map<String, Object> result = controller.getById(1L);
         Assertions.assertEquals(result.size(), testMap.size());
     }
 
@@ -83,11 +83,11 @@ class CryptoControllerTest {
         Map<String, Object> testMap = new LinkedHashMap<>();
         testMap.put("mock-key", "mock-value");
 
-        when(parsingService.validateParamsAndReturnCrypto(req)).thenReturn(cryptoTest);
-        when(cryptoServiceHelper.save(cryptoTest)).thenReturn(dto1);
-        when(cryptoServiceHelper.getMapFromCrypto(dto1, false)).thenReturn(testMap);
+        when(bitfinexService.validateParamsAndReturnCrypto(req)).thenReturn(cryptoTest);
+        when(cryptoService.save(cryptoTest)).thenReturn(dto1);
+        when(cryptoService.getMapFromCrypto(dto1, false)).thenReturn(testMap);
 
-        Map<String, Object> result = target.createEntity(req);
+        Map<String, Object> result = controller.createEntity(req);
         Assertions.assertEquals(result.size(), testMap.size());
     }
 
@@ -98,12 +98,12 @@ class CryptoControllerTest {
         Map<String, Object> testMap    = new LinkedHashMap<>();
         testMap.put("mock-key", "mock-value");
 
-        when(cryptoServiceHelper.findById(1L)).thenReturn(dto1);
-        when(parsingService.validateParamsAndReturnCrypto(req)).thenReturn(cryptoTest);
-        when(cryptoServiceHelper.save(cryptoTest)).thenReturn(dto1);
-        when(cryptoServiceHelper.getMapFromCrypto(dto1, false)).thenReturn(testMap);
+        when(cryptoService.findById(1L)).thenReturn(dto1);
+        when(bitfinexService.validateParamsAndReturnCrypto(req)).thenReturn(cryptoTest);
+        when(cryptoService.save(cryptoTest)).thenReturn(dto1);
+        when(cryptoService.getMapFromCrypto(dto1, false)).thenReturn(testMap);
 
-        Map<String, Object> result = target.updateEntity(1L, req);
+        Map<String, Object> result = controller.updateEntity(1L, req);
         Assertions.assertEquals(result.size(), testMap.size());
     }
 
@@ -111,9 +111,9 @@ class CryptoControllerTest {
     void deleteEntityTest() {
         CryptoDto dto1 = new CryptoDto();
 
-        when(cryptoServiceHelper.findById(1L)).thenReturn(dto1);
-        doNothing().when(cryptoServiceHelper).deleteById(1L);
-        Map<String, Object> result = target.deleteEntity(1L);
+        when(cryptoService.findById(1L)).thenReturn(dto1);
+        doNothing().when(cryptoService).deleteById(1L);
+        Map<String, Object> result = controller.deleteEntity(1L);
         Assertions.assertEquals(true, result.get("success"));
 
     }

@@ -9,12 +9,12 @@ import org.mockito.junit.MockitoJUnitRunner;
 @RunWith(MockitoJUnitRunner.class)
 class ExceptionResolverTest {
 
-    ExceptionResolver target = new ExceptionResolver();
+    ExceptionResolver exceptionResolver = new ExceptionResolver();
 
     @Test
     void handleExceptionTest() {
 
-        Map<String, Object> result = target.handleException(new NullPointerException());
+        Map<String, Object> result = exceptionResolver.handleException(new NullPointerException());
         Assertions.assertTrue(result.containsKey("NullPointerException"));
     }
 }
