@@ -3,8 +3,8 @@ package com.example.onofftask.controller;
 import com.example.onofftask.dto.CryptoDto;
 import com.example.onofftask.model.Crypto;
 import com.example.onofftask.resolver.ExceptionResolver;
-import com.example.onofftask.service.CryptoServiceHelper;
-import com.example.onofftask.service.ParsingService;
+import com.example.onofftask.service.BitfinexService;
+import com.example.onofftask.service.CryptoService;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -22,31 +22,31 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/crypto")
 public class CryptoController {
 
-    private final CryptoServiceHelper cryptoServiceHelper;
-    private final ExceptionResolver   exceptionResolver;
-    private final ParsingService      parsingService;
+    private final CryptoService     cryptoService;
+    private final ExceptionResolver exceptionResolver;
+    private final BitfinexService   bitfinexService;
 
     @Autowired
     public CryptoController(
-        CryptoServiceHelper cryptoServiceHelper,
+        CryptoService cryptoService,
         ExceptionResolver exceptionResolver,
-        ParsingService parsingService
+        BitfinexService bitfinexService
     ) {
-        this.cryptoServiceHelper = cryptoServiceHelper;
+        this.cryptoService = cryptoService;
         this.exceptionResolver = exceptionResolver;
-        this.parsingService = parsingService;
+        this.bitfinexService = bitfinexService;
     }
 
     @GetMapping(value = "/show-entities")
     public List<CryptoDto> getAll() {
-        return cryptoServiceHelper.findAll();
+        return cryptoService.findAll();
     }
 
     @GetMapping(value = "/entities/{id}")
     public Map<String, Object> getById(@PathVariable("id") Long id) {
         try {
-            CryptoDto dto = cryptoServiceHelper.findById(id);
-            return cryptoServiceHelper.getMapFromCrypto(dto, true);
+            CryptoDto dto = cryptoService.findById(id);
+            return cryptoService.getMapFromCrypto(dto, true);
         } catch (Exception e) {
             return exceptionResolver.handleException(e);
         }
@@ -56,10 +56,10 @@ public class CryptoController {
     public Map<String, Object> createEntity(final HttpServletRequest request) {
 
         try {
-            Crypto    validatedCrypto = parsingService.validateParamsAndReturnCrypto(request);
-            CryptoDto addedCryptoDto  = cryptoServiceHelper.save(validatedCrypto);
+            Crypto    validatedCrypto = bitfinexService.validateParamsAndReturnCrypto(request);
+            CryptoDto addedCryptoDto  = cryptoService.save(validatedCrypto);
 
-            return cryptoServiceHelper.getMapFromCrypto(addedCryptoDto, false);
+            return cryptoService.getMapFromCrypto(addedCryptoDto, false);
 
         } catch (Exception e) {
             return exceptionResolver.handleException(e);
@@ -73,12 +73,12 @@ public class CryptoController {
     ) {
 
         try {
-            CryptoDto cryptoToUpdate = cryptoServiceHelper.findById(id);
-            Crypto    newCrypto      = parsingService.validateParamsAndReturnCrypto(request);
+            CryptoDto cryptoToUpdate = cryptoService.findById(id);
+            Crypto    newCrypto      = bitfinexService.validateParamsAndReturnCrypto(request);
 
             newCrypto.setId(cryptoToUpdate.getId());
-            CryptoDto updatedCrypto = cryptoServiceHelper.save(newCrypto);
-            return cryptoServiceHelper.getMapFromCrypto(updatedCrypto, false);
+            CryptoDto updatedCrypto = cryptoService.save(newCrypto);
+            return cryptoService.getMapFromCrypto(updatedCrypto, false);
         } catch (Exception e) {
             return exceptionResolver.handleException(e);
         }
@@ -88,9 +88,9 @@ public class CryptoController {
     public Map<String, Object> deleteEntity(@PathVariable("id") Long id) {
         Map<String, Object> result = new LinkedHashMap<>();
         try {
-            CryptoDto crypto = cryptoServiceHelper.findById(id);
+            CryptoDto crypto = cryptoService.findById(id);
 
-            cryptoServiceHelper.deleteById(crypto.getId());
+            cryptoService.deleteById(crypto.getId());
             result.put("success", true);
         } catch (Exception e) {
             result = exceptionResolver.handleException(e);

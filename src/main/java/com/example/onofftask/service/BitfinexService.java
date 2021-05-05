@@ -7,7 +7,7 @@ import java.math.BigDecimal;
 import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 
-public interface ParsingService {
+public interface BitfinexService {
     Crypto validateParamsAndReturnCrypto(HttpServletRequest request) throws InvalidInputException, InvalidNameException;
 
     BigDecimal getCurrentMarketPriceFromApi(String symbolName);

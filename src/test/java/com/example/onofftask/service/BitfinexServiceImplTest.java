@@ -27,9 +27,9 @@ import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.web.client.RestTemplate;
 
 @RunWith(MockitoJUnitRunner.class)
-class ParsingServiceImplTest {
+class BitfinexServiceImplTest {
 
-    ParsingServiceImpl target;
+    BitfinexServiceImpl bitfinexService;
 
     @Mock
     HttpRequestResolver httpRequestResolver;
@@ -44,9 +44,9 @@ class ParsingServiceImplTest {
         req = mock(HttpServletRequest.class);
         restTemplate = mock(RestTemplate.class);
         httpRequestResolver = mock(HttpRequestResolver.class);
-        target = new ParsingServiceImpl(httpRequestResolver, restTemplate);
-        ReflectionTestUtils.setField(target, "bitfineUrlTickers", "http://foo");
-        ReflectionTestUtils.setField(target, "bitfineUrlSymbols", "http://foo");
+        bitfinexService = new BitfinexServiceImpl(httpRequestResolver, restTemplate);
+        ReflectionTestUtils.setField(bitfinexService, "bitfineUrlTickers", "http://foo");
+        ReflectionTestUtils.setField(bitfinexService, "bitfineUrlSymbols", "http://foo");
     }
 
     @Test
@@ -60,7 +60,7 @@ class ParsingServiceImplTest {
         when(httpRequestResolver.getParam("wallet", req)).thenReturn("mock-wallet");
         when(restTemplate.exchange("http://foo", HttpMethod.GET, entity, String.class)).thenReturn(ResponseEntity.ok("btc,eth"));
 
-        Crypto result = target.validateParamsAndReturnCrypto(req);
+        Crypto result = bitfinexService.validateParamsAndReturnCrypto(req);
         Assertions.assertNotNull(result);
 
     }
@@ -74,7 +74,7 @@ class ParsingServiceImplTest {
 
         when(restTemplate.exchange("http://foo?symbols=tBTC", HttpMethod.GET, entity, String.class)).thenReturn(ResponseEntity.ok("BTC,53889"));
 
-        BigDecimal result = target.getCurrentMarketPriceFromApi("BTC");
+        BigDecimal result = bitfinexService.getCurrentMarketPriceFromApi("BTC");
         Assertions.assertNotNull(result);
     }
 
@@ -86,7 +86,7 @@ class ParsingServiceImplTest {
         HttpEntity<String> entity = new HttpEntity<>("parameters", headers);
         when(restTemplate.exchange("http://foo?symbols=tBTC", HttpMethod.GET, entity, String.class)).thenReturn(ResponseEntity.ok("BTC,10.2"));
 
-        List<String> result = target.parseDataFromJsonToArray("BTC", false);
+        List<String> result = bitfinexService.parseDataFromJsonToArray("BTC", false);
         assertEquals(2, result.size());
 
     }

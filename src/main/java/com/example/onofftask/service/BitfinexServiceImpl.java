@@ -22,18 +22,18 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 @Service
-public class ParsingServiceImpl implements ParsingService {
+public class BitfinexServiceImpl implements BitfinexService {
 
-    private static final Logger log = LoggerFactory.getLogger(ParsingServiceImpl.class);
-    private final HttpRequestResolver httpRequestResolver;
-    private final RestTemplate restTemplate;
+    private static final Logger              log = LoggerFactory.getLogger(BitfinexServiceImpl.class);
+    private final        HttpRequestResolver httpRequestResolver;
+    private final        RestTemplate        restTemplate;
     @Value("${app.bitfine.url.tickers}")
-    private String bitfineUrlTickers;
+    private              String              bitfineUrlTickers;
     @Value("${app.bitfine.url.symbols}")
-    private String bitfineUrlSymbols;
+    private              String              bitfineUrlSymbols;
 
     @Autowired
-    public ParsingServiceImpl(
+    public BitfinexServiceImpl(
         HttpRequestResolver httpRequestResolver,
         RestTemplate restTemplate
     ) {

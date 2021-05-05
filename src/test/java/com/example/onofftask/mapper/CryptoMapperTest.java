@@ -18,7 +18,7 @@ import org.modelmapper.ModelMapper;
 @RunWith(MockitoJUnitRunner.class)
 class CryptoMapperTest {
 
-    CryptoMapper target;
+    CryptoMapper mapper;
     @Mock
     private ModelMapper  modelMapper;
     @Mock
@@ -28,7 +28,7 @@ class CryptoMapperTest {
     public void setUp() {
         modelMapper = mock(ModelMapper.class);
         dateResolver = mock(DateResolver.class);
-        target = new CryptoMapper(modelMapper, dateResolver);
+        mapper = new CryptoMapper(modelMapper, dateResolver);
     }
 
     @Test
@@ -41,7 +41,7 @@ class CryptoMapperTest {
         when(modelMapper.map(crypto, CryptoDto.class)).thenReturn(dto);
         when(dateResolver.truncateTime(date)).thenReturn("2020-10-20");
 
-        CryptoDto result = target.convertToDto(crypto);
+        CryptoDto result = mapper.convertToDto(crypto);
         Assertions.assertEquals("2020-10-20", result.getCreationDate());
     }
 }
